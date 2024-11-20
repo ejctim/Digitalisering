@@ -16,40 +16,28 @@ def generate_arrow(direction):
         B, B, B, W, W, B, B, B,
         B, B, B, W, W, B, B, B,
     ]
+    rotation = 0
     
     match direction:
         case "down":
-            arrow = rotate_arrow(arrow, 180)
+            rotation = 180
         case "left":
-            arrow = rotate_arrow(arrow, 270)
+            rotation = 270
         case "right":
-            arrow = rotate_arrow(arrow, 90)
-        case "middle":
-            arrow = []
-
-    return arrow
-
-
-def rotate_arrow(arrow, angle):
-    matrix = [arrow[i:i + 8] for i in range(0, 64, 8)]
+            rotation = 90
     
-    match angle:
-      case 90:
-        matrix = list(zip(*matrix[::-1]))
-      case 180:
-        matrix = [row[::-1] for row in matrix[::-1]]
-      case 270:
-        matrix = list(zip(*matrix))[::-1]
-    
-    return [pixel for row in matrix for pixel in row] 
+    return (arrow, rotation) 
 
 def display_arrow(direction):
-    arrow = generate_arrow(direction)
+    (arrow, rotation) = generate_arrow(direction)
+    sense.set_rotation(rotation)
     sense.set_pixels(arrow)
 
 def joystick_event(event):
-    if event.action == "pressed":
+    if event.action == "pressed" and event.direction != "middle":
         display_arrow(event.direction)
+    if event.direction == "middle": 
+        sense.clear()
 
 while True:
     for event in sense.stick.get_events():
