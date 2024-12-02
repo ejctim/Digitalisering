@@ -2,6 +2,7 @@ function updateData() {
     fetch('/sensor_data')
         .then(response => response.json())
         .then(data => {
+            document.getElementById('time').textContent = `Fetch Time: ${data.time} `;
             document.getElementById('temperature').textContent = `Temperature: ${data.temperature} °C`;
             document.getElementById('humidity').textContent = `Humidity: ${data.humidity} %`;
             document.getElementById('pressure').textContent = `Pressure: ${data.pressure} hPa`;
