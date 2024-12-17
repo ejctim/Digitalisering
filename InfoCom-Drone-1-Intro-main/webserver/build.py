@@ -52,6 +52,7 @@ def map():
 def get_location():
     while True:
         x_svg, y_svg = translate((longitude, latitude))
+        print(f"Emitting Coordinates: x_svg={x_svg}, y_svg={y_svg}")  # Debug log
         emit('get_location', (x_svg, y_svg))
         time.sleep(0.01)
 
