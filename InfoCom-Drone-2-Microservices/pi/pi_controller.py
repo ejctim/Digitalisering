@@ -39,7 +39,7 @@ def get_direction():
 
 
 if __name__ == "__main__":
-    SERVER_URL = "http://192.168.1.50:5001/drone"
+    SERVER_URL = "http://127.0.0.1:5001/drone"
     while True:
         d_long, d_la, send_vel = get_direction()
         if send_vel:
