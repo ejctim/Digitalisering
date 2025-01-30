@@ -1,14 +1,37 @@
 import math
 import requests
 import argparse
+import redis
+
+redis_server = redis.Redis(host="127.0.0.1")
 
 #Write you own function that moves the drone from one place to another 
 #the function returns the drone's current location while moving
 #====================================================================================================
-def your_function():
-    longitude = 13.21008
-    latitude = 55.71106
-    return (longitude, latitude)
+def travel(cc, fc, tc, ft):
+    stepSize = 0.00003  
+
+    if ft:
+        vec_x, vec_y = fc[0] - cc[0], fc[1] - cc[1]
+        vec = math.sqrt(vec_x**2 + vec_y**2)
+
+        if vec < stepSize:  
+            return fc, False
+
+        unitvec = (vec_x / vec, vec_y / vec)
+        new_coords = (cc[0] + unitvec[0] * stepSize, cc[1] + unitvec[1] * stepSize)
+        return new_coords, True 
+
+    else:
+        vec_x, vec_y = tc[0] - cc[0], tc[1] - cc[1]
+        vec = math.sqrt(vec_x**2 + vec_y**2)
+
+        if vec < stepSize:
+            return tc, False 
+
+        unitvec = (vec_x / vec, vec_y / vec)
+        new_coords = (cc[0] + unitvec[0] * stepSize, cc[1] + unitvec[1] * stepSize)
+        return new_coords, False 
 #====================================================================================================
 
 
@@ -18,13 +41,19 @@ def run(current_coords, from_coords, to_coords, SERVER_URL):
     # 2. Plan a path with your own function, so that the drone moves from [current_address] to [from_address], and the from [from_address] to [to_address]. 
     # 3. While moving, the drone keeps sending it's location to the database.
     #====================================================================================================
-    while True:
-        drone_coords = your_function()
+    drone_coords = current_coords
+    fromToken = True
+    tolerance = 0.0001
+
+    while math.sqrt((drone_coords[0] - to_coords[0])**2 + (drone_coords[1] - to_coords[1])**2) > tolerance or fromToken:
+        drone_coords, fromToken = travel(drone_coords, from_coords, to_coords, fromToken)
+        print(drone_coords)
         with requests.Session() as session:
             drone_location = {'longitude': drone_coords[0],
                               'latitude': drone_coords[1]
                         }
             resp = session.post(SERVER_URL, json=drone_location)
+
   #====================================================================================================
 
    

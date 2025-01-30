@@ -8,7 +8,7 @@ import subprocess
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
-redis_server = redis.Redis(host="YOUR_REDIS_SERVER")
+redis_server = redis.Redis(host="127.0.0.1")
 
 geolocator = Nominatim(user_agent="my_request")
 region = ", Lund, Skåne, Sweden"
@@ -28,7 +28,7 @@ def route_planner():
     elif to_location is None:
         message = 'Destination address not found, please input a correct address'
     else:
-        message = 'Get addresses! Start moving'
+        message = ''
         subprocess.Popen(["python3", "../pi/pi_controller.py", '--clong', str(current_location[0]), '--clat', str(current_location[1]),
                                                  '--flong', str(from_location.longitude), '--flat', str(from_location.latitude),
                                                  '--tlong', str(to_location.longitude), '--tlat', str(to_location.latitude)

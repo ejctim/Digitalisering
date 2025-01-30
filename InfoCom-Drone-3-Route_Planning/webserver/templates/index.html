@@ -23,7 +23,9 @@
         if (this.readyState == 4 && this.status == 200) {
           try{
             var resp = this.responseText;
-            alert(resp);
+            if(resp != ''){
+              alert(resp);
+            }
           }
           catch(err){
             alert(this.responseText);
